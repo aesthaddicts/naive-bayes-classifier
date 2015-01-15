@@ -16,3 +16,5 @@ for file_path in training_files:
 docs_in_class = defaultdict(list)
 for doc in training_docs:
     docs_in_class[doc.type].append(doc)
+
+[print(doc.get_tokens()) for doc in training_docs]

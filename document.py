@@ -1,3 +1,9 @@
+import re
+import string
+
+# for removing punctuation
+regex = re.compile("[%s]" % re.escape(string.punctuation))
+
 class Document():
     """Represents a document on the filesystem"""
 
@@ -8,4 +14,4 @@ class Document():
         file.close()
 
     def get_tokens(self):
-        return self.content.lower().split()
+        return re.sub(regex, "", self.content.lower()).split()
