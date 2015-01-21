@@ -15,3 +15,6 @@ class Document():
 
     def get_tokens(self):
         return re.sub(regex, "", self.content.lower()).split()
+
+    def get_text(self):
+        return self.content.lower()
