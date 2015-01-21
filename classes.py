@@ -42,6 +42,13 @@ class Classes():
 
         return count
 
+    def count_token_total(self, token_name):
+        total_count = 0
+        for doc_class in self.classes:
+            total_count += self.count_token_in_class(token_name, doc_class)
+
+        return total_count
+
 
     """ Get unique list of all words in all classes """
     def get_vocabulary(self):
