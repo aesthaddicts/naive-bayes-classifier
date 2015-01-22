@@ -6,6 +6,12 @@ from collections import defaultdict
 from document import Document
 from classes import Classes
 
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except:
+        return False
 
 # first, set up training data
 training_files = glob.glob('./documents/*/train/*.txt')
@@ -26,16 +32,23 @@ print(classes.total_doc_count)
 print(classes.get_doc_count("wirtschaft"))
 
 
+training_results = defaultdict(list)
+
 # start pseudo code training
-# for doc_class in classes.get_class_names():
-#     prior = classes.get_doc_count(doc_class) / classes.total_doc_count
-#     print(prior)
-#
-#     for term in classes.get_vocabulary():
-#         tct_frequency = classes.count_token_in_class(term, doc_class)
-#         cond_prob = tct_frequency + 1 / (classes.count_token_total(term) * (tct_frequency + 1))
-#
-#         print(doc_class, term, cond_prob)
+for doc_class in classes.get_class_names():
+    prior = classes.get_doc_count(doc_class) / classes.total_doc_count
+    print(prior)
+
+    for term in classes.get_vocabulary():
+        tct_frequency = classes.count_token_in_class(term, doc_class)
+        cond_prob = tct_frequency + 1 / (classes.count_token_total(term) * (tct_frequency + 1))
+
+        if doc_class not in training_results:
+            training_results[doc_class] = defaultdict(list)
+
+        # store data for later use
+        training_results[doc_class][term] = math.log(cond_prob)
+        # print(doc_class, term, cond_prob)
 
 
 # now, look at the test files
@@ -55,8 +68,7 @@ for doc in test_docs:
     for doc_class in classes.get_class_names():
         score[doc_class] = math.log(classes.get_doc_count(doc_class) / classes.total_doc_count)
         for token in tokens:
-            tct_frequency = classes.count_token_in_class(token, doc_class)
-            cond_prob = tct_frequency + 1 / ((classes.count_token_total(token) + 1) * (tct_frequency + 1))
-
-            score[doc_class] += cond_prob
+            # ignore tokens that don't exist in the training data. TODO: is that correct?
+            if is_number(training_results[doc_class][token]):
+                score[doc_class] += training_results[doc_class][token]
     print(doc.type, score)
