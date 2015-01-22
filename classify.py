@@ -1,5 +1,6 @@
 import glob
 import math
+import operator
 
 from collections import defaultdict
 
@@ -60,6 +61,8 @@ for file_path in test_files:
     document_class = file_path.split("/")[2]
     test_docs.append(Document(file_path, document_class))
 
+correct_classified = 0
+
 # start pseudo code testing
 for doc in test_docs:
     tokens = doc.get_tokens()
@@ -71,4 +74,9 @@ for doc in test_docs:
             # ignore tokens that don't exist in the training data. TODO: is that correct?
             if is_number(training_results[doc_class][token]):
                 score[doc_class] += training_results[doc_class][token]
-    print(doc.type, score)
+    print(doc.file_name, "Actual doc class:", doc.type, "Predicted class:", max(score, key=score.get))
+
+    if doc.type == max(score, key=score.get):
+        correct_classified += 1
+
+print(correct_classified, "out of", len(test_docs), "correct classified.")

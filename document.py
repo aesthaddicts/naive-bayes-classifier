@@ -10,6 +10,7 @@ class Document():
     def __init__(self, file_path, type=None, encoding="utf-8"):
         file = open(file_path, encoding=encoding)
         self.type = type
+        self.file_name = file_path.split("/")[4]
         self.content = file.read()
         file.close()
 
